@@ -15,38 +15,38 @@ from can_data import inverter_data
 import time
 import datetime
 
-class read_data_worker(QThread):
+class read_data_worker_1(QThread):
     can_data = pyqtSignal(list)
 
-    def __init__(self, inverter):
+    def __init__(self, inverter_1):
         super().__init__()
-        self.inverter = inverter
-        self.data_list = []
+        self.inverter_1 = inverter_1
+        self.data_list_1 = []
 
     def run(self):
         print("Sending commands to set the voltage and current limit of each convertor as required.")
-        self.inverter.Power_on_all_modules_grid_on()
-        self.inverter.set_automatic_switching_mode()
-        self.inverter.discharge_current_limit_mode_grid_on()
-        self.inverter.discharge_cut_off_voltage()
-        self.inverter.Power_on_all_modules()
+        self.inverter_1.Power_on_all_modules_grid_on()
+        self.inverter_1.set_automatic_switching_mode()
+        self.inverter_1.discharge_current_limit_mode_grid_on()
+        self.inverter_1.discharge_cut_off_voltage()
+        self.inverter_1.Power_on_all_modules()
         time.sleep(5)
 
         while True:
-            self.inverter.Power_on_all_modules()
-            self.data_list.append(self.convert_data(self.inverter.Module_dc_voltage()))
-            self.data_list.append(self.convert_data(self.inverter.module_dc_current()))
-            self.data_list.append(self.convert_data(self.inverter.ac_ab_line_voltage()))
-            self.data_list.append(self.convert_data(self.inverter.ac_bc_line_voltage()))
-            self.data_list.append(self.convert_data(self.inverter.ac_ca_line_voltage()))
-            self.data_list.append(self.convert_data(self.inverter.ac_a_phase_current()))
-            self.data_list.append(self.convert_data(self.inverter.ac_b_phase_current()))
-            self.data_list.append(self.convert_data(self.inverter.ac_c_phase_current()))
-            self.data_list.append(self.convert_data(self.inverter.total_active_power()))
-            self.data_list.append(self.convert_data(self.inverter.module_ambient_temperature()))
-            self.can_data.emit(self.data_list)
+            self.inverter_1.Power_on_all_modules()
+            self.data_list_1.append(self.convert_data(self.inverter_1.Module_dc_voltage()))
+            self.data_list_1.append(self.convert_data(self.inverter_1.module_dc_current()))
+            self.data_list_1.append(self.convert_data(self.inverter_1.ac_ab_line_voltage()))
+            self.data_list_1.append(self.convert_data(self.inverter_1.ac_bc_line_voltage()))
+            self.data_list_1.append(self.convert_data(self.inverter_1.ac_ca_line_voltage()))
+            self.data_list_1.append(self.convert_data(self.inverter_1.ac_a_phase_current()))
+            self.data_list_1.append(self.convert_data(self.inverter_1.ac_b_phase_current()))
+            self.data_list_1.append(self.convert_data(self.inverter_1.ac_c_phase_current()))
+            self.data_list_1.append(self.convert_data(self.inverter_1.total_active_power()))
+            self.data_list_1.append(self.convert_data(self.inverter_1.module_ambient_temperature()))
+            self.can_data.emit(self.data_list_1)
 
-            self.data_list = []
+            self.data_list_1 = []
             time.sleep(0.5)
 
     def convert_data(self, response):
@@ -57,6 +57,49 @@ class read_data_worker(QThread):
         if hex_ == '':
             return 0
         return (int(hex_, 16)/1000)
+
+class read_data_worker_2(QThread):
+    can_data = pyqtSignal(list)
+
+    def __init__(self, inverter_2):
+        super().__init__()
+        self.inverter_2 = inverter_2
+        self.data_list_2 = []
+
+    def run(self):
+        print("Sending commands to set the voltage and current limit of each convertor as required.")
+        self.inverter_2.Power_on_all_modules_grid_on()
+        self.inverter_2.set_automatic_switching_mode()
+        self.inverter_2.discharge_current_limit_mode_grid_on()
+        self.inverter_2.discharge_cut_off_voltage()
+        self.inverter_2.Power_on_all_modules()
+        time.sleep(5)
+
+        while True:
+            self.inverter_2.Power_on_all_modules()
+            self.data_list_2.append(self.convert_data(self.inverter_2.Module_dc_voltage()))
+            self.data_list_2.append(self.convert_data(self.inverter_2.module_dc_current()))
+            self.data_list_2.append(self.convert_data(self.inverter_2.ac_ab_line_voltage()))
+            self.data_list_2.append(self.convert_data(self.inverter_2.ac_bc_line_voltage()))
+            self.data_list_2.append(self.convert_data(self.inverter_2.ac_ca_line_voltage()))
+            self.data_list_2.append(self.convert_data(self.inverter_2.ac_a_phase_current()))
+            self.data_list_2.append(self.convert_data(self.inverter_2.ac_b_phase_current()))
+            self.data_list_2.append(self.convert_data(self.inverter_2.ac_c_phase_current()))
+            self.data_list_2.append(self.convert_data(self.inverter_2.total_active_power()))
+            self.data_list_2.append(self.convert_data(self.inverter_2.module_ambient_temperature()))
+            self.can_data.emit(self.data_list_2)
+
+            self.data_list_2 = []
+            time.sleep(0.5)
+
+    def convert_data(self, response):
+        data = list(response)[4:8]
+        hex_ = ''
+        for a in data:
+            hex_ = hex_+hex(a).lstrip('0x')
+        if hex_ == '':
+            return 0
+        return (int(hex_, 26)/2000)
 
 class biderectional_ui(QMainWindow):
     def __init__(self):
@@ -80,13 +123,7 @@ class biderectional_ui(QMainWindow):
         self.start_comm_btn.setText("Start Communication")
         self.start_comm_btn.setFixedWidth(200)
 
-        # self.start_comm_btn.clicked.connect(self.read_data)
-
-        # Dropdown to select the respective channel to display the respective CAN-data on the UI
-        self.convertor_selector = QComboBox()
-        self.convertor_selector.addItems(["Convertor", "Convertor_1", "Convertor_2"])
-        # Connect the currentIndexChanged signal of the convertor_selector combo box to the switch_depending_on_convertor_selected function
-        self.convertor_selector.currentIndexChanged[int].connect(self.switch_depending_on_convertor_selected)
+        self.start_comm_btn.clicked.connect(self.read_data)
 
         self.main_layout.addWidget(self.convertor_selector)
         self.main_layout.addWidget(self.start_comm_btn)
@@ -102,76 +139,98 @@ class biderectional_ui(QMainWindow):
                            'Total Active Power',
                            'Temperature']
 
-        self.parameter_table_widget = QTableWidget()
-        self.main_layout.addWidget(self.parameter_table_widget)
-        self.set_table()
+        self.parameter_table_widget_1 = QTableWidget()
+        self.main_layout.addWidget(self.parameter_table_widget_1)
+        self.set_table_1()
 
-    def set_table(self):
-        self.parameter_table_widget.setRowCount(5)
-        self.parameter_table_widget.setColumnCount(5)
-        self.parameter_table_widget.verticalHeader().setVisible(False)
-        self.parameter_table_widget.horizontalHeader().setVisible(False)
+        self.parameter_table_widget_2 = QTableWidget()
+        self.main_layout.addWidget(self.parameter_table_widget_2)
+        self.set_table_2()
 
-        self.parameter_table_widget.setColumnWidth(1, 75)
-        self.parameter_table_widget.setColumnWidth(0, 200)
-        self.parameter_table_widget.setColumnWidth(2, 20)
-        self.parameter_table_widget.setColumnWidth(3, 200)
-        self.parameter_table_widget.setColumnWidth(4, 75)
+    def set_table_1(self):
+        self.parameter_table_widget_1.setRowCount(5)
+        self.parameter_table_widget_1.setColumnCount(5)
+        self.parameter_table_widget_1.verticalHeader().setVisible(False)
+        self.parameter_table_widget_1.horizontalHeader().setVisible(False)
+
+        self.parameter_table_widget_1.setColumnWidth(1, 75)
+        self.parameter_table_widget_1.setColumnWidth(0, 200)
+        self.parameter_table_widget_1.setColumnWidth(2, 20)
+        self.parameter_table_widget_1.setColumnWidth(3, 200)
+        self.parameter_table_widget_1.setColumnWidth(4, 75)
         
 
         mid = int(len(self.parameters)/2)
 
         for i in range(0, mid):
-            self.parameter_table_widget.setItem(i, 0, QTableWidgetItem(self.parameters[i]))
-            self.parameter_table_widget.setItem(i, 3, QTableWidgetItem(self.parameters[i+mid]))
+            self.parameter_table_widget_1.setItem(i, 0, QTableWidgetItem(self.parameters[i]))
+            self.parameter_table_widget_1.setItem(i, 3, QTableWidgetItem(self.parameters[i+mid]))
+    
+    def set_table_2(self):
+        self.parameter_table_widget_2.setRowCount(5)
+        self.parameter_table_widget_2.setColumnCount(5)
+        self.parameter_table_widget_2.verticalHeader().setVisible(False)
+        self.parameter_table_widget_2.horizontalHeader().setVisible(False)
 
-    def switch_depending_on_convertor_selected(self, index):
-        text = self.convertor_selector.itemText(index)
-
-        if self.data_worker:  # Check if a DataWorker is already running
-            self.data_worker.quit()  # Quit the current DataWorker
-            self.data_worker = None
-
-        if (text == "Convertor_1"):
-            print("First convertor selected")
-            self.inverter = inverter_data(125000,'00', '0A', '23', '00', 'F0')
-            self.result_file = "result_1.txt"
-            self.read_data()
+        self.parameter_table_widget_2.setColumnWidth(2, 75)
+        self.parameter_table_widget_2.setColumnWidth(0, 200)
+        self.parameter_table_widget_2.setColumnWidth(2, 20)
+        self.parameter_table_widget_2.setColumnWidth(3, 200)
+        self.parameter_table_widget_2.setColumnWidth(4, 75)
         
-        elif (text == "Convertor_2"):
-            print("Second convertor selected")
-            self.inverter = inverter_data(125000,'00', '0A', '23', '01', 'F0')
-            self.result_file = "result_2.txt"
-            self.read_data()
-            
-        else:
-            print("Invalid convertor selected")
-            self.inverter = None
-            self.result_file = None
+
+        mid = int(len(self.parameters)/2)
+
+        for i in range(0, mid):
+            self.parameter_table_widget_2.setItem(i, 0, QTableWidgetItem(self.parameters[i]))
+            self.parameter_table_widget_2.setItem(i, 3, QTableWidgetItem(self.parameters[i+mid]))
 
     def read_data(self):
-        if self.inverter:
-            print("start communication on clicking the push button")
-            self.data_worker = read_data_worker(self.inverter)
-            self.data_worker.can_data.connect(self.update_table)
-            self.data_worker.start()
-        else:
-            print("No valid convertor selected. Please choose a valid convertor.")
+        print("start communication on clicking the push button")
 
-    def update_table(self, data):
+        self.inverter_1 = inverter_data(125000,'00', '0A', '23', '00', 'F0')
+        self.inverter_2 = inverter_data(125000,'00', '0A', '23', '01', 'F0')
+
+        # Worker for first invertor
+        self.data_worker_1 = read_data_worker_1(self.inverter_1)
+        self.data_worker_1.can_data.connect(self.update_table_1)
+        self.data_worker_1.start()
+
+        # Worker for second invertor
+        self.data_worker_2 = read_data_worker_2(self.inverter_2)
+        self.data_worker_2.can_data.connect(self.update_table_2)
+        self.data_worker_2.start()
+
+
+    def update_table_1(self, data):
         mid = int(len(data)/2)
         for i in range(0, mid):
-            self.parameter_table_widget.setItem(i, 1, QTableWidgetItem(str(data[i])))
-            self.parameter_table_widget.setItem(i, 4, QTableWidgetItem(str(data[i+mid])))
+            self.parameter_table_widget_1.setItem(i, 1, QTableWidgetItem(str(data[i])))
+            self.parameter_table_widget_1.setItem(i, 4, QTableWidgetItem(str(data[i+mid])))
         
-        if self.result_file:
-            output_file = open(self.result_file, 'a')
-            output_file.write(str(datetime.datetime.now()))
-            output_file.write(" : ")
-            output_file.write(str(data))
-            output_file.write("\n")
-            # output_file.write(str(temp))
-            output_file.close()
+        # if self.result_file:
+        #     output_file = open(self.result_file, 'a')
+        #     output_file.write(str(datetime.datetime.now()))
+        #     output_file.write(" : ")
+        #     output_file.write(str(data))
+        #     output_file.write("\n")
+        #     # output_file.write(str(temp))
+        #     output_file.close()
+    
+    def update_table_2(self, data):
+        mid = int(len(data)/2)
+        for i in range(0, mid):
+            self.parameter_table_widget_2.setItem(i, 1, QTableWidgetItem(str(data[i])))
+            self.parameter_table_widget_2.setItem(i, 4, QTableWidgetItem(str(data[i+mid])))
+        
+        # if self.result_file:
+        #     output_file = open(self.result_file, 'a')
+        #     output_file.write(str(datetime.datetime.now()))
+        #     output_file.write(" : ")
+        #     output_file.write(str(data))
+        #     output_file.write("\n")
+        #     # output_file.write(str(temp))
+        #     output_file.close()
 
 def main():
     myApp = QApplication(sys.argv)

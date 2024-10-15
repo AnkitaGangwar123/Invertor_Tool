@@ -235,12 +235,12 @@ class inverter_data:
         """
         02 A4 3F F0 21 10 00 00 00 00 00 A2
         """
-        identifier = 0x02A43FF0
+        identifier = self.convert_identifier()
         data=[0x21, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0xA2]
         self.send_message(identifier, data)
 
     def discharge_current_limit_mode(self):
-        identifier = 0x02A43FF0
+        identifier = self.convert_identifier()
         """
         02 A4 3F F0 11 02 00 00 00 011 E 54
         """
@@ -258,18 +258,18 @@ class inverter_data:
         self.send_message(identifier, data)
 
     def Power_on_all_modules(self):
-        identifier = 0x02A43FF0
+        identifier = self.convert_identifier()
         data=[0x11, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0xA0]
         self.send_message(identifier, data)
 
     def Power_on_all_modules_grid_on(self):
         print("Grid ON")
-        identifier = 0x02A43FF0
+        identifier = self.convert_identifier()
         data=[0x21, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0xA1]
         self.send_message(identifier, data)
 
     def set_automatic_switching_mode(self):
         print("Automatic mode")
-        identifier = 0x02A43FF0
+        identifier = self.convert_identifier()
         data=[0x11, 0x26, 0x00, 0x00, 0x00, 0x00, 0x00, 0xA2]
         self.send_message(identifier, data)
