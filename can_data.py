@@ -1,5 +1,5 @@
 """
-Updated can_data.py combobox
+Updated can_data.py seperate tables
 """
 import cantools
 from can import Message

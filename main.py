@@ -1,5 +1,5 @@
 """
-Updated main.py combo box
+Updated main.py seperate tables
 """
 import sys
 from sys import argv
